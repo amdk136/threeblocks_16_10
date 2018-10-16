@@ -1,0 +1,16 @@
+solid solidTopToFluid
+ facet normal 0 1 0
+  outer loop
+   vertex 0 2 1
+   vertex 0 2 0
+   vertex 1 2 0
+  endloop
+ endfacet
+ facet normal 0 1 0
+  outer loop
+   vertex 0 2 1
+   vertex 1 2 0
+   vertex 1 2 1
+  endloop
+ endfacet
+endsolid solidTopToFluid

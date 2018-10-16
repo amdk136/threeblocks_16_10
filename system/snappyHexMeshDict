@@ -1,0 +1,108 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  6
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/mesh/generation/snappyHexMeshDict.cfg"
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+
+geometry
+{
+    absoluteUnit
+    {
+        type triSurfaceMesh;
+        file "absoluteUnit.stl";
+
+        regions
+        {
+            fluidInlet     { name fluidInlet;     }
+            fluidOutlet    { name fluidOutlet;    }
+            fluidExternal  { name fluidExternal;  }
+            solidTop       { name solidTop; }
+            solidBase      { name solidBase; }
+        }
+    }
+
+    solidBaseToFluid
+    {
+        type triSurfaceMesh;
+        file "solidBaseToFluid.stl";
+    }
+
+    solidTopToFluid
+    {
+        type triSurfaceMesh;
+        file "solidTopToFluid.stl";
+    }
+};
+
+castellatedMeshControls
+{
+    refinementSurfaces
+    {
+        absoluteUnit
+        {
+            level (0 0);
+            regions
+            {
+                fluidInlet     { level (0 0); patchInfo { type patch; } }
+                fluidOutlet    { level (0 0); patchInfo { type patch; } }
+                fluidExternal  { level (1 1); patchInfo { type wall;  } }
+                solidBase      { level (1 1); patchInfo { type wall;  } }
+                solidTop       { level (1 1); patchInfo { type wall;  } }
+            }
+        }
+
+        solidTopToFluid
+        {
+            level (1 1);
+            faceZone solidTopToFluid;
+            cellZone solidTop;
+            cellZoneInside insidePoint;
+            insidePoint (0.5 2 0.5);
+        }
+
+        solidBaseToFluid
+        {
+            level (1 1);
+            faceZone solidBaseToFluid;
+            cellZone solidBase;
+            cellZoneInside insidePoint;
+            insidePoint (0.5 1 0.5);
+        }
+    }
+
+    nCellsBetweenLevels 1;
+
+    refinementRegions
+    {}
+
+    locationInMesh (0.5 1.5 0.5);
+}
+
+addLayersControls
+{
+    relativeSizes       true;
+    minThickness        1;
+    finalLayerThickness 1;
+    expansionRatio      1;
+    layers
+    {}
+}
+
+// ************************************************************************* //
